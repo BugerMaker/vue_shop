@@ -52,10 +52,16 @@ export default {
       this.$refs.LoginRef.resetFields()
     },
     Login () {
-      this.$refs.LoginRef.validate(valid => {
+      this.$refs.LoginRef.validate(async valid => {
         if (!valid) return
-        const result = this.$http.post('login', this.LoginForm)
-        console.log(result)
+        const { data: res } = await this.$http.post('login', this.LoginForm)
+        if (res.meta.status !== 200) return this.$message.error('登录失败！')
+        this.$message.success('登录成功！')
+        console.log(res)
+        // 登录成功之后的跳转动作
+        // 首先使用sessionStorage保存返回的token
+        window.sessionStorage.setItem('token', res.data.token)
+        this.$router.push('/home')
       })
     }
   }
