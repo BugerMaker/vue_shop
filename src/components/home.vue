@@ -9,34 +9,65 @@
       <el-container>
         <el-aside width="200px">
           <el-menu
-            default-active="2"
+            :default-active="activePath"
             class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
             background-color="#333744"
             text-color="#fff"
-            active-text-color="#ffd04b">
-            <el-submenu index="1">
+            :unique-opened="true"
+            :router="true"
+            active-text-color="#409EFF">
+            <!-- 一级菜单 -->
+            <el-submenu :index="item.id.toString()" v-for="item in menulist" :key="item.id">
               <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <i :class=" iconfont[item.id]"></i>
+                <span>{{ item.authName }}</span>
               </template>
-              <el-menu-item index="1-1">
-                <i class="el-icon-location"></i>选项1</el-menu-item>
+              <!-- 二级菜单 -->
+              <el-menu-item :index=" '/' + subItem.path" v-for="subItem in item.children" :key="subItem.id" @click="saveNavbar('/' + subItem.path)">
+                <i class="el-icon-menu"></i>{{ subItem.authName }}</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      menulist: [],
+      iconfont: {
+        125: 'iconfont icon-user',
+        103: 'iconfont icon-tijikongjian',
+        101: 'iconfont icon-shangpin',
+        102: 'iconfont icon-danju',
+        145: 'iconfont icon-baobiao'
+      },
+      activePath: ''
+    }
+  },
+  created() {
+    this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
+  },
   methods: {
     logout() {
       window.sessionStorage.clear()
       this.$router.push('/login')
+    },
+    async getMenuList() {
+      const { data: res } = await this.$http.get('menus')
+      // console.log(res)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.menulist = res.data
+    },
+    saveNavbar(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
@@ -66,9 +97,16 @@ export default {
 
 .el-aside {
   background-color: #333744;
+  .el-menu {
+    border-right: none;
+  }
 }
 
 .el-main {
   background-color: #eaedf1;
+}
+
+.iconfont {
+  margin-right: 10px;
 }
 </style>
