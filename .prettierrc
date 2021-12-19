@@ -1,0 +1,9 @@
+{
+    "semi": false,  
+    "singleQuote": true,
+    "trailingComma": "none",
+    "wrap_attributes": "force",
+    "end_with_newline": false,
+    "sortAttributes": false,
+    "wrap_line_length": 120
+}
