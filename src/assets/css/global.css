@@ -20,3 +20,7 @@ body,
 .el-pagination {
     margin-top: 15px;
 }
+/* 级联选择器溢出问题解决方案 */
+.el-cascader-menu {
+    height: 300px !important;
+  }
